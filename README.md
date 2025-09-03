@@ -34,7 +34,7 @@ ollama-langchain-labs/
 ### 1. Clone repo
 
 ```bash
-git clone https://github.com/<your-username>/ollama-langchain-labs.git
+git clone https://github.com/ShishirRao276/AgenticAI.git
 cd ollama-langchain-labs/week1
 ```
 
