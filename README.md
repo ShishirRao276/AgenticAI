@@ -20,7 +20,7 @@ ollama-langchain-labs/
 
 ---
 
-## ⚡ Features
+## Features
 
 * **LangChain + Ollama integration**
 * **Configurable Prompt Library** (`qa`, `summarize`, `json_qa`)
@@ -29,7 +29,7 @@ ollama-langchain-labs/
 
 ---
 
-## 🛠️ Setup
+## Setup
 
 ### 1. Clone repo
 
@@ -69,7 +69,7 @@ ollama pull llama3.1:8b   # bigger, more accurate
 
 ---
 
-## ▶️ Usage
+## Usage
 
 ### Lab Prompt Example
 
