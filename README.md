@@ -157,7 +157,7 @@ Now, HuggingFace handles embeddings, Chroma stores them, and Ollama is used pure
 
 ---
 
-#### 1. Lab – Simple RAG (`lab_rag_simple.py`)
+#### 1. Lab – Simple RAG (`lab_rag.py`)
 
 Reads a single `.txt` file, splits into chunks, embeds with HuggingFace, stores in Chroma, retrieves via MMR reranking, and answers with Ollama.
 
@@ -165,7 +165,7 @@ Run:
 
 ```bash
 cd week2
-python lab_rag_simple.py
+python lab_rag.py
 ```
 
 Example:
