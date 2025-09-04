@@ -50,7 +50,7 @@ ollama-langchain-labs/
 
 ```bash
 git clone https://github.com/ShishirRao276/AgenticAI.git
-cd ollama-langchain-labs
+cd AgenticAI
 ```
 
 ### 2. Create & activate virtual environment
