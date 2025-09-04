@@ -1,1 +1,10 @@
-".venv/" 
+# Python venv
+.venv/
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Chroma vector stores
+**/chroma_store/
