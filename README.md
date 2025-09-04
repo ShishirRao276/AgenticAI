@@ -12,7 +12,7 @@ Each week introduces new concepts and builds towards creating a **Knowledge Base
 ## Project Structure
 
 ```
-ollama-langchain-labs/
+AgenticAI/
 │
 ├── week1/
 │   ├── lab_prompt.py          # Simple LangChain prompt → JSON output
