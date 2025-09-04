@@ -8,3 +8,4 @@ __pycache__/
 
 # Chroma vector stores
 **/chroma_store/
+**/chroma_store_simple/
