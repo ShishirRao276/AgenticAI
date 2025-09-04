@@ -1,8 +1,11 @@
+
 ---
 
 # Ollama + LangChain Labs
 
-This repo contains hands-on labs and **Mini-Projects** using [LangChain](https://www.langchain.com/) with [Ollama](https://ollama.com/) and [Chroma](https://www.trychroma.com/) to run **local LLM-powered Q\&A** over files.
+This repo contains **hands-on labs** and **Mini-Projects** using [LangChain](https://www.langchain.com/), [Ollama](https://ollama.com/), and [Chroma](https://www.trychroma.com/) to run **local LLM-powered Q\&A** over your own documents.
+
+Each week introduces new concepts and builds towards creating a **Knowledge Base (KB) Assistant**.
 
 ---
 
@@ -13,12 +16,13 @@ ollama-langchain-labs/
 │
 ├── week1/
 │   ├── lab_prompt.py          # Simple LangChain prompt → JSON output
-│   ├── Mini_ProjectWeek1.py   # Local Q&A over a PDF with FAISS + Ollama embeddings
+│   ├── Mini_ProjectWeek1.py   # Mini Project #1: Q&A over PDF with FAISS + Ollama embeddings
 │   └── Report1.pdf            # Example file
 │
 ├── week2/
-│   ├── lab_rag.py             # RAG pipeline: Chroma + HuggingFace embeddings + Ollama LLM
-│   ├── inspect_chroma.py      # Inspect Chroma store (docs, embeddings, similarity search)
+│   ├── lab_rag_simple.py      # Lab: Simple RAG over a text file
+│   ├── Mini_ProjectWeek2.py   # Mini Project #2: KB Assistant with Chroma + HuggingFace + Ollama
+│   ├── inspect_chroma.py      # Inspect Chroma store (embeddings, docs, similarity search)
 │   └── docs/                  # Folder for your .txt/.pdf documents
 │
 └── README.md
@@ -29,15 +33,14 @@ ollama-langchain-labs/
 ## Features
 
 * **LangChain + Ollama integration**
-* **Prompt Library** (`qa`, `summarize`, `json_qa`)
-* **Local PDF/Text Q\&A** using FAISS (Week 1) or Chroma (Week 2)
-* **Embeddings**:
+* **Prompt Library** for structured outputs (`qa`, `summarize`, `json_qa`)
+* **Local Q\&A over documents**
 
-  * Week 1: via Ollama (slower)
-  * Week 2: via HuggingFace `sentence-transformers/all-MiniLM-L6-v2` (fast, CPU)
-* **Knowledge Base Assistant** with persisted **ChromaDB** collections
-* **Inspect tool** to check how many embeddings are stored and preview chunks
-* **Interactive Q\&A** loop for your own questions
+  * Week 1 → FAISS + Ollama embeddings (slower, simple intro)
+  * Week 2 → Chroma + HuggingFace embeddings (faster, CPU-friendly, persistent)
+* **Knowledge Base Assistant** with persistent **ChromaDB collections**
+* **Inspection tool** to check stored embeddings and preview chunks
+* **Interactive Q\&A loop** for natural language queries
 
 ---
 
@@ -50,7 +53,7 @@ git clone https://github.com/ShishirRao276/AgenticAI.git
 cd ollama-langchain-labs
 ```
 
-### 2. Create & activate venv
+### 2. Create & activate virtual environment
 
 ```bash
 python -m venv .venv
@@ -67,29 +70,68 @@ pip install -r requirements.txt
 ### 4. Install Ollama & pull models
 
 ```bash
-# Install Ollama from https://ollama.com/download
-ollama pull llama3.2:3b          # LLM for answering
+# Download Ollama from https://ollama.com/download
+ollama pull llama3.2:3b   # Small, faster
+# or
+ollama pull llama3.1:8b   # Larger, more accurate
 ```
 
 ---
 
 ## Usage
 
-### Week 1 – Simple Prompt & FAISS Q\&A
+### Week 1 – Prompting & FAISS Q\&A
+
+#### 1. Lab – Prompt Template → JSON output
 
 ```bash
 cd week1
 python lab_prompt.py
+```
+
+Example:
+
+```
+Enter your question: What is the capital of France?
+```
+
+Output:
+
+```json
+{
+  "question": "What is the capital of France?",
+  "answer": "Paris"
+}
+```
+
+---
+
+#### 2. Mini Project #1 – Local PDF Q\&A with FAISS
+
+```bash
+cd week1
 python Mini_ProjectWeek1.py
 ```
 
 Example:
 
-```text
+```
 Enter your question: Summarize the file
 ```
 
-Output:
+Logs (truncated):
+
+```
+[INFO] Loading PDF: Report1.pdf
+[INFO] Extracted page 1 with 5195 chars
+[INFO] Created 49 chunks
+[INFO] Creating embeddings with Ollama...
+[INFO] Embeddings + FAISS index built in 497.11 sec
+[INFO] Querying LLM with: Summarize the file
+[INFO] LLM answered in 44.99 sec
+```
+
+Final Answer:
 
 ```json
 {
@@ -102,24 +144,55 @@ Output:
 
 ### Week 2 – RAG with Chroma + HuggingFace
 
-#### 1. Put your docs
+In Week 1, we used **Ollama embeddings**. That worked, but it was **extremely slow**, since Ollama had to embed every chunk through its local LLM endpoint.
 
-Drop `.pdf` or `.txt` files into `week2/docs/`.
+In Week 2, we switched to **HuggingFace Sentence Transformers** (`all-MiniLM-L6-v2`) for embeddings because:
 
-#### 2. Run the RAG pipeline
+* **Much faster** on CPU (no GPU required)
+* Models are optimized for **semantic similarity tasks**
+* **Embeddings are cached** locally and reused
+* **Privacy-friendly** → no cloud calls
+
+Now, HuggingFace handles embeddings, Chroma stores them, and Ollama is used purely for **LLM inference (answers)**.
+
+---
+
+#### 1. Lab – Simple RAG (`lab_rag_simple.py`)
+
+Reads a single `.txt` file, splits into chunks, embeds with HuggingFace, stores in Chroma, retrieves via MMR reranking, and answers with Ollama.
+
+Run:
 
 ```bash
 cd week2
-python lab_rag.py
+python lab_rag_simple.py
 ```
 
 Example:
 
-```text
-Ask about your docs (or 'quit'): Who are the authors?
+```
+Ask a question (or 'quit'): What is Chroma?
+[Retriever pulled 2 chunks]
+Chunk 1: Chroma is a vector database used for storing embeddings...
+Chunk 2: LangChain makes it easy to build applications...
+Answer: Chroma is a vector database for storing embeddings and enabling semantic search.
 ```
 
-Logs will show:
+---
+
+#### 2. Mini Project #2 – KB Assistant (`Mini_ProjectWeek2.py`)
+
+Handles multiple `.pdf` and `.txt` files in `docs/`.
+Builds a **persistent Chroma store** that survives across runs.
+
+Run:
+
+```bash
+cd week2
+python Mini_ProjectWeek2.py
+```
+
+Logs (example):
 
 ```
 [INFO] Found PDF file: Report1.pdf
@@ -128,19 +201,29 @@ Logs will show:
 [INFO] No embeddings found, rebuilding collection...
 [INFO] Total chunks: 23
 [INFO] Built new Chroma collection with 23 embeddings.
+[INFO] User question: Who are the authors?
+[INFO] Retriever returned 3 chunks
 ```
 
-And you’ll get an answer grounded in your document.
+Answer:
 
-#### 3. Inspect Chroma
+```
+The authors are Sai Shishir Ailneni, Priyaanka Reddy Boothkuri, and Manogna Tummanepally.
+```
 
-Use the inspection tool to see stored embeddings and test similarity search directly:
+---
+
+#### 3. Inspect Stored Embeddings (`inspect_chroma.py`)
+
+Check how many embeddings are stored, preview documents, and run direct similarity search.
+
+Run:
 
 ```bash
 python inspect_chroma.py
 ```
 
-Example output:
+Example:
 
 ```
 Total embeddings in collection 'kb_docs': 23
@@ -148,7 +231,7 @@ Total embeddings in collection 'kb_docs': 23
 Sample docs:
 Doc 1: DETECTION OF HATE SPEECH IN MEMES ...
 Doc 2: I. INTRODUCTION ...
-Doc 3: text and image that often characterizes memes...
+Doc 3: ...
 
 Query: What is this document about?
 Result 1: The dataset comprises several thousand memes...
